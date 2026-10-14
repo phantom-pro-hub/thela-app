@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Thela: Smart Basket Builder & Checkout Intervention Prototype</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Master Layout: Desktop Viewport Split (Left PM Studio Sidebar + Centered Mobile Phone) -->
+  <div class="master-layout">
+
+    <!-- ========================================================
+         LEFT PM STUDIO SIDEBAR (Clean, Professional Product Panel)
+         ======================================================== -->
+    <aside class="pm-sidebar" aria-label="Product Management Controls & Insights">
+      <div class="sidebar-header">
+        <div class="sidebar-badge">AirLearn Take-Home</div>
+        <h1 class="sidebar-title">Thela • Bet #1 Prototype</h1>
+        <p class="sidebar-subtitle">Smart Basket Builder & Low-AOV Retention Bridge</p>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Live Experiment Tracker -->
+      <div class="sidebar-meta-list">
+        <div class="meta-item">
+          <span class="meta-label">Primary Metric Target</span>
+          <span class="meta-value">+18% Basket Conversion (Sub-₹199)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Contribution Margin Guardrail</span>
+          <span class="meta-value">Contribution Margin &gt; +₹5.00 / order</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Free Delivery Threshold</span>
+          <span class="meta-value">₹199 (Standard Delivery: ₹35)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Current Cart Subtotal</span>
+          <span class="meta-value" id="pmSidebarCartVal">₹145 (Deficit: ₹54)</span>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Screen Navigation Toggles -->
+      <div class="sidebar-actions">
+        <span class="meta-label">Simulated App Screens</span>
+        <button class="sidebar-nav-btn" onclick="navigateTo('checkout')">
+          <span>🛒 Checkout (3 Stacked Fillers)</span>
+          <span>→</span>
+        </button>
+        <button class="sidebar-nav-btn" onclick="navigateTo('feed')">
+          <span>🛍️ Home Feed (Floating Bar)</span>
+          <span>→</span>
+        </button>
+        <button class="sidebar-nav-btn" onclick="navigateTo('success')">
+          <span>✅ Order Placed Screen</span>
+          <span>→</span>
+        </button>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <!-- Reset Button (Default 1: ₹145 Cart) -->
+      <div class="sidebar-footer">
+        <button class="sidebar-reset-btn" onclick="resetToDefault()" title="Reset to Default 1: Bread (₹35) + 2 Eggs (₹110) = ₹145">
+          <span>🔄</span> Reset to Default 1 (₹145 Cart)
+        </button>
+        <p class="sidebar-note">Restores initial drop-off state: 1 Bread + 2 Eggs (₹145 cart, ₹54 away from free delivery).</p>
+      </div>
+    </aside>
+
+
+    <!-- ========================================================
+         MOBILE DEVICE SIMULATION FRAME (Centered, Single-Screen Viewport)
+         ======================================================== -->
+    <main class="device-wrapper" role="region" aria-label="Thela Mobile App Simulation">
+      
+      <!-- Mobile Status Bar (Matches iOS / Android Quick-Commerce Frame) -->
+      <header class="status-bar">
+        <span>3:30</span>
+        <div class="status-bar-icons">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
+            <path d="M1 9h2v3H1V9zm4-3h2v6H5V6zm4-3h2v9H9V3zm4-3h2v12h-2V0z"/>
+          </svg>
+          <svg width="16" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/>
+          </svg>
+          <span style="font-size: 11px; font-weight: 700; margin-left: 2px;">67%</span>
+        </div>
+      </header>
+
+      <!-- App Header (Delivery Address & Search/Cart Actions) -->
+      <nav class="app-header">
+        <div class="delivery-address">
+          <button class="back-btn" id="appHeaderBack" onclick="navigateTo('feed')" aria-label="Go back to feed">←</button>
+          <div class="address-text">
+            <h2>Deliver to <strong>Home</strong> ▾</h2>
+            <p>2032, Floor 3, Tower 2, Prestige Falcon City...</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="navigateTo('feed')" title="Search Catalog" aria-label="Search">🔍</button>
+          <button class="icon-btn" onclick="navigateTo('checkout')" title="View Cart" aria-label="Cart">
+            🛒<span class="cart-badge-dot" id="headerCartBadge"></span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Internal Scrollable Viewport (ONLY place inside the phone that scrolls) -->
+      <div class="app-viewport">
+
+        <!-- ========================================================
+             SCREEN 1: HOME FEED & BROWSING VIEW
+             ======================================================== -->
+        <section id="screenFeed" class="view-screen">
+
+          <!-- Category Horizontal Scroll Bar -->
+          <div class="category-pills-bar">
+            <div class="cat-pill active" data-cat="all">
+              <span class="cat-pill-icon">🛍️</span>
+              <span>All Items</span>
+            </div>
+            <div class="cat-pill" data-cat="milk_bread">
+              <span class="cat-pill-icon">🍞</span>
+              <span>Milk & Bread</span>
+            </div>
+            <div class="cat-pill" data-cat="dairy">
+              <span class="cat-pill-icon">🥛</span>
+              <span>Dairy & Eggs</span>
+            </div>
+            <div class="cat-pill" data-cat="produce">
+              <span class="cat-pill-icon">🥦</span>
+              <span>Fresh Veggies</span>
+            </div>
+            <div class="cat-pill" data-cat="snacks">
+              <span class="cat-pill-icon">🍪</span>
+              <span>Munchies</span>
+            </div>
+          </div>
+
+          <!-- Clean, Studio-Quality Deals Banner (Professional, No Amateur Bunting) -->
+          <div class="deals-hero">
+            <div class="deals-hero-header">
+              <span class="deals-hero-tag">Flash Delivery</span>
+              <span class="deals-hero-badge">⚡ 15 Mins</span>
+            </div>
+            <h3>Daily Essential Deals</h3>
+            <p>Direct from Indiranagar Pod 4 • 98.8% In-Stock Guarantee</p>
+          </div>
+
+          <!-- Products Shelf Grid -->
+          <div class="products-shelf">
+            <div class="shelf-title">
+              <span id="shelfTitleText">Popular Groceries</span>
+              <span onclick="navigateTo('checkout')">View Cart →</span>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+          </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             SCREEN 2: CHECKOUT / CART SCREEN (DEFAULT VIEW)
+             ======================================================== -->
+        <section id="screenCheckout" class="view-screen active">
+
+          <div class="checkout-container">
+
+            <!-- Dark Store 15-Min Delivery Guarantee Card -->
+            <div class="delivery-promise-card">
+              <div class="promise-icon">⚡</div>
+              <div class="promise-details">
+                <h4>Delivery in 11–15 minutes</h4>
+                <p>Shipment from Indiranagar Pod 4 • Order fulfillment active</p>
+              </div>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="cart-items-card">
+              <div class="cart-card-header">
+                <h3>Cart Items</h3>
+                <span class="cart-items-count-tag" id="checkoutItemCountTag">3 items</span>
+              </div>
+              <div id="checkoutItemsContainer"></div>
+            </div>
+
+            <!-- FLOW 2: THREE STACKED 1-TAP FILLERS MICRO-CAROUSELS -->
+            <div class="fillers-stack-container" id="fillersStackContainer"></div>
+
+            <!-- Bill Summary Breakdown (Contains Inline Delivery Fee Helper Text) -->
+            <div class="bill-card">
+              <h3>Bill Summary</h3>
+              <div id="checkoutBillContainer"></div>
+            </div>
+
+            <!-- Delivery Instructions Preferences -->
+            <div class="delivery-pref-card">
+              <span class="delivery-pref-title">Delivery Instructions</span>
+              <div class="delivery-pref-pills">
+                <span class="pref-pill">🔕 Avoid calling</span>
+                <span class="pref-pill">🚪 Leave at door</span>
+                <span class="pref-pill">🐾 Pet at home</span>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ========================================================
+             SCREEN 3: ORDER CONFIRMED SCREEN
+             ======================================================== -->
+        <section id="screenSuccess" class="view-screen">
+          <div class="order-success-screen">
+            <div class="success-check-circle">✓</div>
+            <h3>Order Placed in 15 Minutes!</h3>
+            <p>Rider assigned at Indiranagar Dark Store. Arriving by 3:45 PM.</p>
+
+            <div class="order-summary-box" id="orderSummaryBox"></div>
+
+            <div class="validation-proof-card">
+              <strong class="validation-proof-title">PM Take-Home Verification:</strong>
+              <p class="validation-proof-body">
+                The smart basket builder bridged the ₹199 threshold profitably without hurting contribution margin, eliminating the ₹35 drop-off barrier!
+              </p>
+            </div>
+
+            <button class="reset-demo-btn" onclick="resetToDefault()">Test Again (Reset to Default 1)</button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ========================================================
+           LOCKED CHECKOUT ACTION BAR
+           Direct child of .device-wrapper (OUTSIDE .app-viewport)
+           100% Locked & Fixed at the bottom of the device container!
+           Never scrolls, never floats over middle content!
+           ======================================================== -->
+      <footer class="checkout-bar" id="checkoutStickyBar">
+        <div class="checkout-total-col">
+          <span class="checkout-total-val" id="checkoutStickyTotal">₹0</span>
+          <span class="checkout-view-bill" onclick="scrollToBillDetails()">View Bill Details</span>
+        </div>
+        <button class="pay-btn" onclick="navigateTo('success')">Proceed to Pay →</button>
+      </footer>
+
+      <!-- FLOW 1: Persistent Floating Cart Bar (ONLY on Feed Browsing View) -->
+      <div class="floating-cart-bar" id="floatingCartBar" style="display: none;"></div>
+
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
