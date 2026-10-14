@@ -1326,3 +1326,29 @@ html, body {
     height: 96vh;
   }
 }
+
+/* Seamless Mobile & Tablet Responsiveness: Full-screen native experience on mobile devices */
+@media (max-width: 850px) {
+  body, html {
+    overflow: hidden;
+  }
+  .master-layout {
+    padding: 0;
+    gap: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+  }
+  .pm-sidebar {
+    display: none;
+  }
+  .device-wrapper {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
